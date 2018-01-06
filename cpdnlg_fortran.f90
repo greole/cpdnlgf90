@@ -204,14 +204,14 @@
 
 !   CALCULATE particle temperature
 1       IF(time.LE.tim(nt+1))then
-          Tp = tem(nt) + (time-tim(nt))*(tem(nt+1)-tem(nt))/ %
+        Tp = tem(nt) + (time-tim(nt))*(tem(nt+1)-tem(nt))/ &
                                         (tim(nt+1)-tim(nt))
         elseif(nt.lt.ntim)then
           nt = nt+1
           go to 1
         ELSE
           PRINT*,'REACHED END OF GAS TEMPERATURE CORRELATION'
-           if(inside.eq.false)then
+           if(.not.inside)then
              print*,'!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!'
              print*,'O/C and H/C ratios are outside the  '
              print*,'bounds of the library coals. '
@@ -240,7 +240,7 @@
 !
 !  CORRECTOR
 !
-w! --    DEVOLATILIZATION RATES
+! --    DEVOLATILIZATION RATES
         Call perks(ypred,yp,Tp)
 ! COMPONENT MASS CONSERVATION
            if(y(1).gt.5.e-3)then
@@ -675,8 +675,8 @@ w! --    DEVOLATILIZATION RATES
          f(i1) = (dif+metold(i)*fracr)/mt(i)
          ftold(i) = ft(i)
          Ftot = Ftot + f(i1)
-         if(f(i1).gt.1.0)print*,'f(i1),ft(i),ftold(i),metold(i)=',
-     x   i1,f(i1),ft(i),ftold(i),metold(i)
+         if(f(i1).gt.1.0)print*,'f(i1),ft(i),ftold(i),metold(i)=',&
+        i1,f(i1),ft(i),ftold(i),metold(i)
 10    continue
       ntot = nmax + 1
       f(1) = (fgas-fgas0)/gasmw
@@ -796,7 +796,7 @@ w! --    DEVOLATILIZATION RATES
         IMPLICIT real*4 (A-H,O-Z)
         real*4 ind
         integer*2 lib
-        logical inside
+        logical inside,yyyy
         common/lgmod/yf,xoc,yhc
         save
         dimension xx(12),yy(12),a(23),b(23),s1(12),s2(12),s3(12)
@@ -999,7 +999,7 @@ w! --    DEVOLATILIZATION RATES
 !       print*,' ds1,ds2,ds3 = ',ds1,ds2,ds3
 
 !  calculate the area of each triangle used in interpolation scheme
-w
+
         A1=at(ds1,ds2,ds3)
         A2=at(ds1,ds5,ds4)
         A3=at(ds5,ds2,ds6)
@@ -1089,7 +1089,7 @@ w
 !       *****Estimate composition for coals outside mesh************
 !       ************************************************************
 
-        if(inside.eqv.false)then
+        if(.not.inside)then
         data out/.0,.085,.835,1.5,12,.085,.12,.835,1.5,6,.12,.155,&
                .835,1.5,8,.155,.222,.835,1.5,9,.222,.285,.75,1.5,11,&
                .0,.089,.75,.835,4,.0,.05,.63,.75,1,.05,.175,.63,&
